@@ -244,19 +244,17 @@ export function calculateAudioMetrics(audioSensitivity) {
   const amplitude = sum / (frequencyData.length * 255);
 
   // 更新 DOM
-  /* [DISABLED] METRICS tab 暫時停用
   const peakEl = document.getElementById('peak-value');
   const ampEl = document.getElementById('amplitude-value');
   if (peakEl) peakEl.textContent = `${Math.round(peakFrequency)} HZ`;
   if (ampEl) ampEl.textContent = amplitude.toFixed(2);
 
-  // 只更新音訊相關的 phase（~每 3 秒跳一次）
+  // Update phase ~every 3 seconds while audio is active
   if (Math.random() < 0.005) {
     const phases = ['π/4', 'π/2', 'π/6', '3π/4'];
     const phaseEl = document.getElementById('phase-value');
     if (phaseEl) phaseEl.textContent = phases[Math.floor(Math.random() * phases.length)];
   }
-  */
 }
 
 // 音波 UI（audioData 已由呼叫端填充）
