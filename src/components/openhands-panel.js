@@ -15,6 +15,11 @@ function ensureMarkup() {
   const wrapper = document.createElement('div');
   wrapper.className = 'openhands-launcher';
   wrapper.id = 'openhands-launcher';
+  wrapper.style.position = 'fixed';
+  wrapper.style.bottom = '20px';
+  wrapper.style.right = '20px';
+  wrapper.style.zIndex = '20';
+  wrapper.style.pointerEvents = 'auto';
   wrapper.innerHTML = `
     <button class="openhands-toggle" id="openhands-toggle" title="OpenHands"><span class="openhands-arrow">▾</span> OPENHANDS</button>
     <div class="openhands-panel" id="openhands-panel">
