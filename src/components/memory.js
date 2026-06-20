@@ -36,7 +36,7 @@ async function fetchMemory(offset = 0, append = false) {
 // ── 渲染 ──
 
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function renderDay(day) {
