@@ -203,7 +203,7 @@ let streamSpeedTimer = null;
 // ── 載入 Gateway 歷史訊息 ──
 async function loadHistory() {
   try {
-    const displayLimit = parseInt(localStorage.getItem('jarvis-history-limit') || '50');
+    const displayLimit = parseInt(localStorage.getItem('jarvis-history-limit') || '50', 10);
     // 多拉幾倍，因為 tool calls/heartbeat 會被過濾掉
     const fetchLimit = displayLimit * 4;
     const res = await fetch(`/api/history?limit=${fetchLimit}`);

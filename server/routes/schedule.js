@@ -68,6 +68,8 @@ router.get('/schedule', async (req, res) => {
 router.patch('/schedule/:id', async (req, res) => {
   const { enabled } = req.body;
   if (typeof enabled !== 'boolean') return res.status(400).json({ error: 'enabled (boolean) required' });
+  // 限制 job id 格式（英數、底線、點、冒號），避免把任意字串丟給 CLI
+  if (!/^[\w.:-]+$/.test(req.params.id)) return res.status(400).json({ error: 'invalid job id' });
   try {
     await ocCli('cron', enabled ? 'enable' : 'disable', req.params.id);
     broadcastEvent('schedule-update');

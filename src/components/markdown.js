@@ -12,9 +12,19 @@ function extractCodeBlocks(text) {
   return { text: result, blocks, placeholder };
 }
 
+// 連結 URL 安全檢查：只允許 http/https/mailto 與相對/錨點路徑，
+// 阻擋 javascript:、data:、vbscript: 等可執行 scheme
+function sanitizeUrl(url) {
+  const trimmed = url.trim();
+  if (/^(https?:|mailto:|\/|#|\.)/i.test(trimmed)) return trimmed;
+  return '#';
+}
+
 // 渲染行內 markdown
+// 先 escape HTML，再套用 markdown 規則（規則本身只插入受信任的標籤），
+// 避免原始 HTML（含 <script>/<img onerror> 等）被注入
 function renderInline(text) {
-  return text
+  return escapeHtml(text)
     // 行內程式碼（先處理，避免內部被其他規則影響）
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // 粗斜體
@@ -23,8 +33,9 @@ function renderInline(text) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     // 斜體
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // 連結
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // 連結（驗證 URL scheme，文字部分已於上方 escape）
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,
+      (_, label, url) => `<a href="${sanitizeUrl(url)}" target="_blank" rel="noopener">${label}</a>`);
 }
 
 // 檢查是否為表格分隔行（|---|---|）

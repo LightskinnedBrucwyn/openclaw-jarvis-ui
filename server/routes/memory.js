@@ -10,8 +10,8 @@ const MEMORY_DIR = path.join(os.homedir(), '.openclaw', 'workspace', 'memory');
 const MEMORY_FILE = path.join(os.homedir(), '.openclaw', 'workspace', 'MEMORY.md');
 
 router.get('/memory', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 7;
-  const offset = parseInt(req.query.offset) || 0;
+  const limit = parseInt(req.query.limit, 10) || 7;
+  const offset = parseInt(req.query.offset, 10) || 0;
 
   try {
     let entries = [];

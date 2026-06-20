@@ -76,7 +76,7 @@ function render() {
       </div>
       <div class="data-row">
         <span class="data-label">UPDATED:</span>
-        <span class="data-value">${lastUpdate || '—'}</span>
+        <span class="data-value">${lastUpdate ? escapeHtml(lastUpdate) : '—'}</span>
       </div>
     </div>
 

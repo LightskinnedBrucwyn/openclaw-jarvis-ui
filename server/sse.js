@@ -17,6 +17,17 @@ function extractText(payload) {
   return typeof content === 'string' ? content : '';
 }
 
+// 寫入所有 SSE client，若某個 client 已斷線（write 失敗）則移除，避免迴圈拋錯
+function writeAll(msg) {
+  for (const res of sseClients) {
+    try {
+      res.write(`data: ${msg}\n\n`);
+    } catch {
+      sseClients.delete(res);
+    }
+  }
+}
+
 export function broadcastChat(payload) {
   const text = extractText(payload);
   const event = {
@@ -30,17 +41,14 @@ export function broadcastChat(payload) {
   if (payload.message?.provider) event.provider = payload.message.provider;
   if (payload.message?.usage) event.usage = payload.message.usage;
 
-  const data = JSON.stringify(event);
-  for (const res of sseClients) res.write(`data: ${data}\n\n`);
+  writeAll(JSON.stringify(event));
   for (const handler of voiceChatHandlers) { try { handler(payload); } catch {} }
 }
 
 export function broadcastSystem(data) {
-  const msg = JSON.stringify({ type: 'system', ...data });
-  for (const res of sseClients) res.write(`data: ${msg}\n\n`);
+  writeAll(JSON.stringify({ type: 'system', ...data }));
 }
 
 export function broadcastEvent(type) {
-  const msg = JSON.stringify({ type });
-  for (const res of sseClients) res.write(`data: ${msg}\n\n`);
+  writeAll(JSON.stringify({ type }));
 }
