@@ -20,6 +20,9 @@ import skillsRoutes from './routes/skills.js';
 import memoryRoutes from './routes/memory.js';
 import scheduleRoutes from './routes/schedule.js';
 import voiceRoutes from './routes/voice.js';
+import openhandsRoutes from './routes/openhands.js';
+import batCommanderRoutes from './routes/bat-commander.js';
+import nodesRoutes from './routes/nodes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -67,6 +70,9 @@ app.use('/api', skillsRoutes);
 app.use('/api', memoryRoutes);
 app.use('/api', scheduleRoutes);
 app.use('/api', voiceRoutes);
+app.use('/api', openhandsRoutes);
+app.use('/api', batCommanderRoutes);
+app.use('/api', nodesRoutes);
 
 // ── 靜態檔案 ──
 if (SERVE_STATIC) {
