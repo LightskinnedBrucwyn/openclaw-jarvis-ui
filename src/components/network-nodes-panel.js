@@ -24,8 +24,14 @@ function ensureMarkup() {
 }
 
 function renderNode(node) {
-  const slug = node.name.toLowerCase().replace(/\s+/g, '-');
+  const slug = String(node.name || 'unknown').toLowerCase().replace(/\s+/g, '-');
   const pending = node.status === 'pending_telemetry';
+  const cpuPercent = Number(node.cpuPercent);
+  const gpuPercent = Number(node.gpuPercent);
+  const latencyMs = Number(node.latencyMs);
+  const cpuLabel = Number.isFinite(cpuPercent) ? `${cpuPercent}%` : '—';
+  const gpuLabel = Number.isFinite(gpuPercent) ? `${gpuPercent}%` : '—';
+  const latencyLabel = Number.isFinite(latencyMs) ? `${latencyMs} ms` : '—';
 
   return `
     <div class="node-card" data-node="${slug}">
@@ -37,9 +43,9 @@ function renderNode(node) {
       <div class="node-body">
         <div class="data-row"><span class="data-label">IP:</span><span class="data-value">${escapeHtml(node.ip ?? '—')}</span></div>
         <div class="data-row"><span class="data-label">OPEN PORTS:</span><span class="data-value">${(node.openPorts || []).map(escapeHtml).join(', ') || '—'}</span></div>
-        <div class="data-row"><span class="data-label">CPU:</span><span class="data-value">${node.cpuPercent != null ? `${node.cpuPercent}%` : '—'}</span></div>
-        <div class="data-row"><span class="data-label">GPU:</span><span class="data-value">${node.gpuPercent != null ? `${node.gpuPercent}%` : '—'}</span></div>
-        <div class="data-row"><span class="data-label">LATENCY:</span><span class="data-value">${node.latencyMs != null ? `${node.latencyMs} ms` : '—'}</span></div>
+        <div class="data-row"><span class="data-label">CPU:</span><span class="data-value">${cpuLabel}</span></div>
+        <div class="data-row"><span class="data-label">GPU:</span><span class="data-value">${gpuLabel}</span></div>
+        <div class="data-row"><span class="data-label">LATENCY:</span><span class="data-value">${latencyLabel}</span></div>
       </div>
     </div>
   `;
