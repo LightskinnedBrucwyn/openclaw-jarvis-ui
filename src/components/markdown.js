@@ -25,8 +25,9 @@ function renderInline(text) {
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     // 連結（僅允許 http/https/mailto，避免 javascript: 等 XSS）
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, url) => {
-      const safeUrl = /^(https?:|mailto:)/i.test(url.trim()) ? url.trim() : '#';
-      return `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+      const decodedUrl = url.replace(/&amp;/g, '&');
+      const safeUrl = /^(https?:|mailto:)/i.test(decodedUrl.trim()) ? decodedUrl.trim() : '#';
+      return `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">${label}</a>`;
     });
 }
 
@@ -50,8 +51,9 @@ export function renderMarkdown(text) {
   if (!text) return '';
 
   const { text: processed, blocks, placeholder } = extractCodeBlocks(text);
+  const safeText = escapeHtml(processed);
 
-  const lines = processed.split('\n');
+  const lines = safeText.split('\n');
   const html = [];
   let inList = false;
   let listType = null; // 'ul' or 'ol'

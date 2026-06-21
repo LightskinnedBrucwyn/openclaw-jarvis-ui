@@ -4,6 +4,13 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Format telemetry metrics safely: return '—' for null/undefined/empty/non-numeric
+function formatFiniteMetric(value, suffix = '') {
+  if (value === null || value === undefined) return '—';
+  if (typeof value === 'string' && value.trim() === '') return '—';
+  const num = Number(value);
+  return Number.isFinite(num) ? `${num}${suffix}` : '—';
+}
 function ensureMarkup() {
   if (document.getElementById('network-nodes-panel')) return;
   const panel = document.createElement('div');
@@ -24,8 +31,11 @@ function ensureMarkup() {
 }
 
 function renderNode(node) {
-  const slug = node.name.toLowerCase().replace(/\s+/g, '-');
+  const slug = String(node.name || 'unknown').toLowerCase().replace(/\s+/g, '-');
   const pending = node.status === 'pending_telemetry';
+  const cpuLabel = formatFiniteMetric(node.cpuPercent, '%');
+  const gpuLabel = formatFiniteMetric(node.gpuPercent, '%');
+  const latencyLabel = formatFiniteMetric(node.latencyMs, ' ms');
 
   return `
     <div class="node-card" data-node="${slug}">
@@ -37,9 +47,9 @@ function renderNode(node) {
       <div class="node-body">
         <div class="data-row"><span class="data-label">IP:</span><span class="data-value">${escapeHtml(node.ip ?? '—')}</span></div>
         <div class="data-row"><span class="data-label">OPEN PORTS:</span><span class="data-value">${(node.openPorts || []).map(escapeHtml).join(', ') || '—'}</span></div>
-        <div class="data-row"><span class="data-label">CPU:</span><span class="data-value">${node.cpuPercent != null ? `${node.cpuPercent}%` : '—'}</span></div>
-        <div class="data-row"><span class="data-label">GPU:</span><span class="data-value">${node.gpuPercent != null ? `${node.gpuPercent}%` : '—'}</span></div>
-        <div class="data-row"><span class="data-label">LATENCY:</span><span class="data-value">${node.latencyMs != null ? `${node.latencyMs} ms` : '—'}</span></div>
+        <div class="data-row"><span class="data-label">CPU:</span><span class="data-value">${cpuLabel}</span></div>
+        <div class="data-row"><span class="data-label">GPU:</span><span class="data-value">${gpuLabel}</span></div>
+        <div class="data-row"><span class="data-label">LATENCY:</span><span class="data-value">${latencyLabel}</span></div>
       </div>
     </div>
   `;
