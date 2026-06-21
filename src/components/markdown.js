@@ -23,8 +23,11 @@ function renderInline(text) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     // 斜體
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // 連結
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // 連結（僅允許 http/https/mailto，避免 javascript: 等 XSS）
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, url) => {
+      const safeUrl = /^(https?:|mailto:)/i.test(url.trim()) ? url.trim() : '#';
+      return `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+    });
 }
 
 // 檢查是否為表格分隔行（|---|---|）

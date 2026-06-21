@@ -27,6 +27,19 @@ import { initOrbMessages } from './components/orb-messages.js';
 import { initThoughtStream } from './components/thought-stream.js';
 import { initMobileToolbar } from './components/mobile-toolbar.js';
 import { initPowerSave, isPowerSave } from './components/powersave.js';
+import { initOpenHandsPanel } from './components/openhands-panel.js';
+import { initBatCommanderPanel } from './components/bat-commander-panel.js';
+import { initNetworkNodesPanel } from './components/network-nodes-panel.js';
+
+// AI Hub fallback styling. Kept in JS so this branch does not need to rewrite the large root stylesheet.
+const AI_HUB_STYLE_ID = 'ai-hub-inline-style';
+function initAiHubStyles() {
+  if (document.getElementById(AI_HUB_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = AI_HUB_STYLE_ID;
+  style.textContent = '.openhands-toggle{background:var(--panel-bg);border:1px solid var(--panel-border);color:var(--accent-primary)}.openhands-panel.open{max-height:360px;opacity:1}.network-nodes-header,.node-card{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:5px;padding:.5rem;color:var(--accent-primary);backdrop-filter:blur(8px)}.network-nodes-body{display:flex;gap:.75rem;margin-top:.5rem}.network-nodes-panel.collapsed .network-nodes-body,.node-card.collapsed .node-body{display:none}.node-card{flex:1}.node-header{display:flex;gap:.4rem;cursor:pointer}.node-name{flex:1}.bc-level-unknown,.node-status-pending{color:var(--text-secondary)}.bc-brief{color:var(--text-secondary);line-height:1.4}';
+  document.head.appendChild(style);
+}
 
 document.addEventListener('DOMContentLoaded', async function () {
   // 載入設定
@@ -60,6 +73,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   initSpectrumCollapse();
   initSystemMonitor();
   initVisualizers();
+  initAiHubStyles();
+  initOpenHandsPanel();
+  initBatCommanderPanel();
+  initNetworkNodesPanel();
   initTimestamp();
   initAudioControls();
 
