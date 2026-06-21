@@ -4,6 +4,13 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Format telemetry metrics safely: return '—' for null/undefined/empty/non-numeric
+function formatFiniteMetric(value, suffix = '') {
+  if (value === null || value === undefined) return '—';
+  if (typeof value === 'string' && value.trim() === '') return '—';
+  const num = Number(value);
+  return Number.isFinite(num) ? `${num}${suffix}` : '—';
+}
 function ensureMarkup() {
   if (document.getElementById('network-nodes-panel')) return;
   const panel = document.createElement('div');
@@ -26,12 +33,9 @@ function ensureMarkup() {
 function renderNode(node) {
   const slug = String(node.name || 'unknown').toLowerCase().replace(/\s+/g, '-');
   const pending = node.status === 'pending_telemetry';
-  const cpuPercent = Number(node.cpuPercent);
-  const gpuPercent = Number(node.gpuPercent);
-  const latencyMs = Number(node.latencyMs);
-  const cpuLabel = Number.isFinite(cpuPercent) ? `${cpuPercent}%` : '—';
-  const gpuLabel = Number.isFinite(gpuPercent) ? `${gpuPercent}%` : '—';
-  const latencyLabel = Number.isFinite(latencyMs) ? `${latencyMs} ms` : '—';
+  const cpuLabel = formatFiniteMetric(node.cpuPercent, '%');
+  const gpuLabel = formatFiniteMetric(node.gpuPercent, '%');
+  const latencyLabel = formatFiniteMetric(node.latencyMs, ' ms');
 
   return `
     <div class="node-card" data-node="${slug}">
